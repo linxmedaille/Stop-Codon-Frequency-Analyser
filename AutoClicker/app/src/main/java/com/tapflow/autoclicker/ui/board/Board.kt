@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -243,7 +244,7 @@ fun BoardPreviewCard(
                     size = inner.size,
                     cornerRadius = androidx.compose.ui.geometry.CornerRadius(26.dp.toPx()),
                 )
-                androidx.compose.ui.graphics.drawscope.clipPath(
+                clipPath(
                     androidx.compose.ui.graphics.Path().apply {
                         addRoundRect(androidx.compose.ui.geometry.RoundRect(inner, androidx.compose.ui.geometry.CornerRadius(26.dp.toPx())))
                     },

@@ -61,6 +61,7 @@ import com.tapflow.autoclicker.ui.glass.GlassEffects
 import com.tapflow.autoclicker.ui.glass.GlassStyle
 import com.tapflow.autoclicker.ui.glass.drawGlassFinish
 import com.tapflow.autoclicker.ui.glass.glassSupported
+import com.tapflow.autoclicker.ui.glass.lensSupported
 import com.tapflow.autoclicker.ui.glass.liquidGlass
 import com.tapflow.autoclicker.ui.glass.liquidSpan
 import com.tapflow.autoclicker.ui.glass.liquidStretch
@@ -271,7 +272,8 @@ private fun Modifier.lensOf(
         if (lift > 0.01f) {
             drawOutline(outline, Color.White.copy(alpha = 0.18f * lift))
         }
-        if (glassSupported) {
+        if (lensSupported) {
+            // The lens shader does the magnifying.
             translate(-offset.x, -offset.y) { drawLayer(source) }
         } else {
             val pivot = Offset(size.width / 2f, size.height / 2f)

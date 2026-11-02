@@ -36,6 +36,7 @@ for m in re.finditer(r'<node [^>]*>', xml):
         print(f"tapped '{want}' at {x},{y}")
         sys.exit(0)
 print(f"'{want}' not found")
+sys.exit(1)
 PY
 }
 
@@ -122,6 +123,9 @@ adb shell input swipe 540 1900 540 400 400; sleep 1
 adb shell input swipe 540 1900 540 400 400; sleep 1
 tap_text "Start clicking"; sleep 2
 adb shell am start -a android.settings.SETTINGS > /dev/null; shot 15_panel_armed 3
-tap_text "Play"; shot 16_running 6
-tap_text "Stop"; shot 17_stopped 2
+# The panel is its own overlay window; fall back to its known position (pixel_6, 420 dpi).
+tap_text "Play" || adb shell input tap 259 403
+shot 16_running 6
+tap_text "Stop" || adb shell input tap 406 403
+shot 17_stopped 2
 echo "done"

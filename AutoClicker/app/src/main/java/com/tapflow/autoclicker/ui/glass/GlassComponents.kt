@@ -609,11 +609,11 @@ fun GlassSlider(
                     scaleY = scale
                 }
                 .liquidGlass(
-                    LocalBackdrop.current.takeIf { lift > 0.05f },
+                    null,
                     RoundedCornerShape(percent = 50),
                     GlassStyle(
-                        tint = Color.White.copy(alpha = 0.55f + 0.45f * (1f - lift)),
-                        fallbackTint = Color.White,
+                        tint = Color.White.copy(alpha = 0.6f + 0.4f * (1f - lift)),
+                        fallbackTint = Color.White.copy(alpha = 0.6f + 0.4f * (1f - lift)),
                         blur = 2.dp,
                         refraction = 1f,
                         bezel = 10.dp,
