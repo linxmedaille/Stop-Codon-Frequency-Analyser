@@ -120,6 +120,8 @@ adb shell input keyevent BACK; sleep 1
 
 # 7. Board editor (full screen).
 adb shell am start -n "$PKG/.MainActivity" --es editor Multi > /dev/null; shot 10_editor
+# Dismiss the one-time "Viewing full screen" system notice, then capture again.
+adb shell input tap 860 655; shot 10b_editor 3
 adb shell input keyevent BACK; sleep 1
 
 # 8. Dark theme.

@@ -110,9 +110,11 @@ fun LiquidDock(
         GlassDefaults.clear(c).copy(
             tint = Color.Transparent,
             blur = 0.dp,
-            refraction = 1f,
-            bezel = 14.dp,
-            saturation = 1.6f,
+            // Thin icons and labels sit right under the lens: bend only a narrow rim so
+            // they stay crisp, and let the magnification do the talking.
+            refraction = 0.3f,
+            bezel = 9.dp,
+            saturation = 1.35f,
         )
     }
 
@@ -224,7 +226,7 @@ fun LiquidDock(
                         Modifier.lensOf(
                             source = contentLayer,
                             offset = Offset(l, with(density) { 5.dp.toPx() }),
-                            zoom = 1f + 0.18f * lift,
+                            zoom = 1f + 0.12f * lift,
                             effects = fx,
                             style = indicatorStyle,
                             lift = lift,
@@ -270,7 +272,7 @@ private fun Modifier.lensOf(
             ),
         )
         if (lift > 0.01f) {
-            drawOutline(outline, Color.White.copy(alpha = 0.18f * lift))
+            drawOutline(outline, Color.White.copy(alpha = 0.42f * lift))
         }
         if (lensSupported) {
             // The lens shader does the magnifying.

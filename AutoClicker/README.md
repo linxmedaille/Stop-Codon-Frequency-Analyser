@@ -16,8 +16,11 @@ want to automate:
   <img src="docs/screenshots/11_chain_dark.jpg" width="24%" alt="Chain editor in dark mode">
 </p>
 <p>
-  <img src="docs/screenshots/10_editor.jpg" width="24%" alt="Full-screen point editor over a screenshot">
   <img src="docs/screenshots/09b_duration_sheet.jpg" width="24%" alt="Glass duration sheet">
+  <img src="docs/screenshots/10b_editor.jpg" width="24%" alt="Full-screen point editor over a screenshot">
+  <img src="docs/screenshots/05b_swipe_mid.jpg" width="24%" alt="Mid-swipe: pages become liquid glass slabs">
+</p>
+<p>
   <img src="docs/screenshots/15_panel_armed.jpg" width="24%" alt="Floating panel over another app">
   <img src="docs/screenshots/16_running.jpg" width="24%" alt="Running: the tap opened Connected devices">
 </p>
