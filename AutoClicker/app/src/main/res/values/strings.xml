@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tapflow</string>
+    <string name="service_label">Tapflow auto clicker</string>
+    <string name="service_summary">Performs the taps, holds and swipes you set up in Tapflow.</string>
+    <string name="service_description">Tapflow uses this service only to perform the taps, holds and swipes you configure, at the points you choose, while a routine is running. It does not read what is on your screen, and it does not collect or send any data.</string>
+</resources>
