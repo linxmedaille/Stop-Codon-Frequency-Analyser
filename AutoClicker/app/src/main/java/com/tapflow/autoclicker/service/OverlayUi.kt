@@ -13,7 +13,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,6 +50,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
@@ -61,6 +65,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
@@ -133,9 +142,9 @@ fun OverlayPanel(
                         .size(52.dp)
                         .clip(CircleShape)
                         .background(accent)
-                        .clickable(remember { MutableInteractionSource() }, indication = null) {
+                        .onPress("Play or pause") {
                             haptics.confirm()
-                            when (status.phase) {
+                            when (ClickerBridge.status.value.phase) {
                                 Phase.Running -> onPause()
                                 Phase.Countdown -> onStop()
                                 else -> onPlay()
@@ -268,11 +277,38 @@ private fun PanelButton(
             .size(size)
             .clip(CircleShape)
             .background(if (filled) Color.White.copy(alpha = if (enabled) 0.12f else 0.05f) else Color.Transparent)
-            .clickable(remember { MutableInteractionSource() }, indication = null, enabled = enabled, onClick = onClick),
+            .onPress(description, enabled, onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(icon, description, tint = Color.White.copy(alpha = if (enabled) 0.95f else 0.3f), modifier = Modifier.size(size * 0.5f))
     }
+}
+
+/**
+ * Fires on touch-down rather than on release. While a routine is running, injected
+ * gestures can cancel a finger that's resting on the panel before it lifts, so a normal
+ * click could be lost; a press can't be.
+ */
+@Composable
+private fun Modifier.onPress(label: String, enabled: Boolean = true, action: () -> Unit): Modifier {
+    val latest by rememberUpdatedState(action)
+    val isEnabled by rememberUpdatedState(enabled)
+    return this
+        .semantics {
+            role = Role.Button
+            contentDescription = label
+            onClick { if (isEnabled) latest(); isEnabled }
+        }
+        .pointerInput(Unit) {
+            awaitEachGesture {
+                val down = awaitFirstDown()
+                if (isEnabled) {
+                    down.consume()
+                    latest()
+                }
+                waitForUpOrCancellation()
+            }
+        }
 }
 
 private class Flash(val at: Offset, val to: Offset?, val born: Long)

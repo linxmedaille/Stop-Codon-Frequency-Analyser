@@ -55,6 +55,13 @@ class ScriptRunner(
     private var gestures = 0L
     private var rejected = 0L
     private var pausedMs = 0L
+
+    /**
+     * How far behind schedule gestures have put us. The system reports a gesture done some
+     * time after its nominal length; that lag is taken off the following waits so a
+     * "tap every 100 ms" routine really taps ten times a second.
+     */
+    private var lagMs = 0L
     private lateinit var started: TimeMark
     private var limitMs: Long? = null
     private lateinit var program: Program
@@ -66,7 +73,7 @@ class ScriptRunner(
     suspend fun run(program: Program, onEvent: (RunEvent) -> Unit = {}): FinishReason {
         this.program = program
         this.emit = onEvent
-        gestures = 0; rejected = 0; pausedMs = 0
+        gestures = 0; rejected = 0; pausedMs = 0; lagMs = 0
         limitMs = program.timeLimitMs
         started = timeSource.markNow()
         val reason = try {
@@ -91,16 +98,22 @@ class ScriptRunner(
                 is TapStep -> {
                     val at = jitter(step.at)
                     emit(RunEvent.Gesture(step.sourceId, at))
+                    val t0 = activeMs()
                     count(performer.tap(at, step.holdMs))
+                    lagMs += (activeMs() - t0 - step.holdMs).coerceAtLeast(0)
                 }
                 is SwipeStep -> {
                     val from = jitter(step.from)
                     val to = jitter(step.to)
                     emit(RunEvent.Gesture(step.sourceId, from, to))
+                    val t0 = activeMs()
                     count(performer.swipe(from, to, step.durationMs))
+                    lagMs += (activeMs() - t0 - step.durationMs).coerceAtLeast(0)
                 }
                 is WaitStep -> {
-                    val ms = waitLength(step)
+                    val planned = waitLength(step)
+                    val ms = (planned - lagMs).coerceAtLeast(0)
+                    lagMs = (lagMs - planned).coerceAtLeast(0)
                     emit(RunEvent.Waiting(step.sourceId, ms))
                     sleep(ms)
                 }

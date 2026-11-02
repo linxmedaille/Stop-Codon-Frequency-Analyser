@@ -96,6 +96,26 @@ class ScriptRunnerTest {
         assertTrue(finished.stats.gestures >= 9)
     }
 
+    @Test fun gestureLatencyIsTakenOffTheNextWait() = runTest {
+        // The system takes 30 ms longer than the hold to report each tap done.
+        val slow = object : GesturePerformer {
+            val times = mutableListOf<Long>()
+            override suspend fun tap(at: PxPoint, holdMs: Long): Boolean {
+                times += testScheduler.currentTime
+                delay(holdMs + 30)
+                return true
+            }
+            override suspend fun swipe(from: PxPoint, to: PxPoint, durationMs: Long) = true
+        }
+        val cfg = SingleConfig(
+            board = Board(targets = listOf(Target("p", "P1", NPoint(0.5f, 0.5f)))),
+            intervalMs = 100, holdMs = 10,
+            repeat = RepeatPolicy(RepeatMode.Times, times = 10),
+        )
+        ScriptRunner(slow, MutableStateFlow(false), Random(1), testScheduler.timeSource).run(ProgramBuilder.single(cfg, screen).program!!)
+        assertEquals((0 until 10).map { it * 100L }, slow.times)
+    }
+
     @Test fun emptyForeverLoopDoesNotSpin() = runTest {
         val program = Program(steps = listOf(LoopStep(0, emptyList(), "x")), screen = screen, timeLimitMs = 100)
         val rec = Recorder { testScheduler.currentTime }

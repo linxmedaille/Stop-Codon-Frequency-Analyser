@@ -93,8 +93,9 @@ open_page 3; shot 04_settings
 
 # 4. Mid-swipe: the liquid page transition and stretched dock lens.
 open_page 0; sleep 2
-adb shell input swipe 950 1500 150 1500 1800 &
-sleep 0.7; adb exec-out screencap -p > "$OUT/05_swipe_mid.png"; echo "captured 05_swipe_mid"
+adb shell input swipe 980 2000 100 2000 3000 &
+sleep 1.3; adb exec-out screencap -p > "$OUT/05_swipe_mid.png"; echo "captured 05_swipe_mid"
+sleep 0.5; adb exec-out screencap -p > "$OUT/05b_swipe_mid.png"; echo "captured 05b_swipe_mid"
 wait; sleep 1
 
 # 5. Scrolled content.
