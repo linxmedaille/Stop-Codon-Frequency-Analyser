@@ -9,6 +9,23 @@ want to automate:
 | **Multi** | Taps several points in order, each with its own wait afterwards, cycling as many times as you like. |
 | **Chain** | A Scratch-style block editor: snap together *tap*, *hold*, *swipe*, *wait*, *wait random* and C-shaped *repeat* blocks (nestable, or forever). The default chain is the classic example: tap P1 → wait 20 s → tap P2 → repeat 5× { tap P1, wait 1 s }. |
 
+<p>
+  <img src="docs/screenshots/01_single.jpg" width="24%" alt="Single tap page">
+  <img src="docs/screenshots/02_multi.jpg" width="24%" alt="Multi tap page">
+  <img src="docs/screenshots/03_chain.jpg" width="24%" alt="Chain block editor">
+  <img src="docs/screenshots/11_chain_dark.jpg" width="24%" alt="Chain editor in dark mode">
+</p>
+<p>
+  <img src="docs/screenshots/10_editor.jpg" width="24%" alt="Full-screen point editor over a screenshot">
+  <img src="docs/screenshots/09b_duration_sheet.jpg" width="24%" alt="Glass duration sheet">
+  <img src="docs/screenshots/15_panel_armed.jpg" width="24%" alt="Floating panel over another app">
+  <img src="docs/screenshots/16_running.jpg" width="24%" alt="Running: the tap opened Connected devices">
+</p>
+
+*Screenshots come from the CI emulator run (`ci/screenshots.sh`). In the last two, Tapflow's
+floating panel sits over the system Settings app, and the P1 marker shows where it taps.
+Running really does tap "Connected devices" and opens it.*
+
 ## How to use it
 
 1. **Turn on the service.** Android only lets accessibility services tap other apps.
