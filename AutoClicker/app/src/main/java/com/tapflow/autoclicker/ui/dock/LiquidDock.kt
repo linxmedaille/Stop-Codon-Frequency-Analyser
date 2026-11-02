@@ -217,7 +217,7 @@ fun LiquidDock(
                             ),
                         )
                         // Liquid body: base tint that strengthens when lifted.
-                        val base = if (c.isDark) Color.White.copy(alpha = 0.12f + 0.06f * lift) else Color.Black.copy(alpha = 0.075f * (1f - lift) + 0.02f)
+                        val base = if (c.isDark) Color.White.copy(alpha = 0.12f + 0.06f * lift) else Color.Black.copy(alpha = 0.085f * (1f - lift) + 0.025f)
                         drawOutline(outline, base)
                     }
                     .then(
