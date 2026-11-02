@@ -66,7 +66,7 @@ fun SettingsPage(store: Store, serviceOn: Boolean) {
                 Column(Modifier.weight(1f)) {
                     Text("Accessibility service", style = TfType.title, color = c.ink)
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        PulsingDot(if (serviceOn) c.success else c.warning, pulse = !serviceOn)
+                        PulsingDot(if (serviceOn) c.success else c.warning, pulse = false)
                         Spacer(Modifier.width(8.dp))
                         Text(if (serviceOn) "On and ready" else "Off: needed to tap other apps", style = TfType.label, color = c.inkSecondary)
                     }
@@ -142,7 +142,7 @@ fun SettingsPage(store: Store, serviceOn: Boolean) {
             Hairline(Modifier.padding(vertical = 6.dp))
             SettingRow(
                 "Reduce motion",
-                subtitle = "Keep the background still",
+                subtitle = "Calmer page transitions",
                 leading = { IconTile(Icons.Rounded.Animation, Color(0xFFFF9F43)) },
             ) { GlassSwitch(prefs.reduceMotion, { v -> store.updatePrefs { it.copy(reduceMotion = v) } }) }
         }

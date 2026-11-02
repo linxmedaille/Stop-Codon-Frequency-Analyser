@@ -41,6 +41,9 @@ PY
 }
 
 adb wait-for-device
+# Keep going if a dialog would block the screen; ANRs/crashes are reported from logcat at the end.
+adb shell settings put global hide_error_dialogs 1
+adb logcat -c
 adb shell getprop ro.build.version.release
 adb shell wm size
 adb install -r "$APK"
@@ -71,13 +74,17 @@ cat > /tmp/ws.json <<JSON
 JSON
 adb shell am force-stop "$PKG"
 adb shell "run-as $PKG mkdir -p files/screens"
-adb shell "run-as $PKG sh -c 'cat > files/screens/demo.png'" < "$OUT/_target_app.png"
-adb shell "run-as $PKG sh -c 'cat > files/workspace.json'" < /tmp/ws.json
+# (adb push + run-as cp: piping binaries through `adb shell` stdin corrupts them)
+adb push "$OUT/_target_app.png" /data/local/tmp/demo.png > /dev/null
+adb push /tmp/ws.json /data/local/tmp/ws.json > /dev/null
+adb shell chmod 644 /data/local/tmp/demo.png /data/local/tmp/ws.json
+adb shell "run-as $PKG cp /data/local/tmp/demo.png files/screens/demo.png"
+adb shell "run-as $PKG cp /data/local/tmp/ws.json files/workspace.json"
 adb shell "run-as $PKG ls -la files files/screens"
 
 # 3. Pages, light theme.
 adb shell cmd uimode night no
-open_page 0; shot 01_single 6
+open_page 0; shot 01_single 12
 open_page 1; shot 02_multi
 open_page 2; shot 03_chain
 open_page 3; shot 04_settings
@@ -123,8 +130,12 @@ open_page 0; sleep 3; shot 14_single_service_on 1
 adb shell am start -n "$PKG/.MainActivity" --es start Single > /dev/null; sleep 3
 adb shell am start -a android.settings.SETTINGS > /dev/null; shot 15_panel_armed 3
 # The panel is its own overlay window; fall back to its known position (pixel_6, 420 dpi).
-adb shell input tap 259 403
+adb shell input tap 262 507
 shot 16_running 6
-adb shell input tap 406 403
+adb shell input tap 407 507
 shot 17_stopped 2
+
+echo "---- ANRs / crashes (logcat) ----"
+adb logcat -d | grep -E "ANR in|FATAL EXCEPTION|AndroidRuntime|Choreographer.*Skipped" | head -40 || true
+adb logcat -d | grep -A 25 "FATAL EXCEPTION" | head -80 || true
 echo "done"

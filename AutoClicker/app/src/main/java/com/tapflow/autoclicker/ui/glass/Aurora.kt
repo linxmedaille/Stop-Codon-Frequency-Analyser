@@ -1,15 +1,9 @@
 package com.tapflow.autoclicker.ui.glass
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -34,21 +28,14 @@ fun Aurora(
     animate: Boolean = true,
 ) {
     val c = Tf.colors
-    val t: State<Float> = if (animate) {
-        val transition = rememberInfiniteTransition(label = "aurora")
-        transition.animateFloat(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(tween(36_000, easing = LinearEasing), RepeatMode.Restart),
-            label = "aurora-t",
-        )
-    } else {
-        remember { androidx.compose.runtime.mutableFloatStateOf(0.15f) }
-    }
+    // The background stays still at rest: every glass surface re-blurs whatever is behind
+    // it, so a constantly moving backdrop would redraw the whole UI every frame. It moves
+    // with the pager instead (palette shift + parallax), which is when the eye expects it.
+    val t = remember { mutableFloatStateOf(0.15f) }
     val blobs = remember { BLOBS }
     Canvas(modifier) {
         drawRect(c.base)
-        val pos = pagePosition()
+        val pos = if (animate) pagePosition() else pagePosition().let { kotlin.math.round(it) }
         val i = floor(pos).toInt()
         val f = pos - i
         val palettes = c.aurora

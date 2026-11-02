@@ -261,19 +261,20 @@ fun BoardPreviewCard(
         }
 
         if (image == null) {
-            Column(
+            Row(
                 Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 40.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+                    .liquidGlass(photoBackdrop, RoundedCornerShape(22.dp), GlassDefaults.overPhoto(c), elevation = 6.dp, shadowColor = c.shadow)
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(Icons.Rounded.Image, null, tint = c.inkTertiary, modifier = Modifier.size(30.dp))
-                Spacer(Modifier.height(8.dp))
+                Icon(Icons.Rounded.Image, null, tint = c.accent, modifier = Modifier.size(22.dp))
+                Spacer(Modifier.width(10.dp))
                 Text(
                     emptyHint,
                     style = TfType.caption.copy(fontSize = TfType.label.fontSize * 0.92f),
                     color = c.inkSecondary,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 )
             }
         }

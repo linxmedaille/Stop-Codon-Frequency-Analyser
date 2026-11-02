@@ -78,20 +78,25 @@ fun ServiceChip(on: Boolean, onClick: () -> Unit) {
         text = if (on) "Service on" else "Turn on service",
         selected = on,
         onClick = onClick,
-        leading = { PulsingDot(if (on) c.success else c.warning, pulse = !on) },
+        leading = { PulsingDot(if (on) c.success else c.warning, pulse = false) },
     )
 }
 
 @Composable
 fun PulsingDot(color: Color, pulse: Boolean, modifier: Modifier = Modifier) {
+    // Only animate while it means something (a routine running); idle screens stay still.
+    if (!pulse) {
+        Box(modifier.size(10.dp).drawBehind { drawCircle(color) })
+        return
+    }
     val t = rememberInfiniteTransition(label = "dot")
-    val s by t.animateFloat(1f, if (pulse) 2.2f else 1f, infiniteRepeatable(tween(1_100), RepeatMode.Restart), label = "dot-s")
+    val s by t.animateFloat(1f, 2.2f, infiniteRepeatable(tween(1_100), RepeatMode.Restart), label = "dot-s")
     val a by t.animateFloat(0.5f, 0f, infiniteRepeatable(tween(1_100), RepeatMode.Restart), label = "dot-a")
     Box(
         modifier
             .size(10.dp)
             .drawBehind {
-                if (pulse) drawCircle(color.copy(alpha = a), radius = size.minDimension / 2f * s)
+                drawCircle(color.copy(alpha = a), radius = size.minDimension / 2f * s)
                 drawCircle(color)
             },
     )
