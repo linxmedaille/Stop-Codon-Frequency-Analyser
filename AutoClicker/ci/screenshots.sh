@@ -108,22 +108,6 @@ adb shell input swipe 540 1700 540 600 500; shot 06_chain_scrolled
 open_page 0; sleep 2
 adb shell input swipe 540 1700 540 500 500; shot 07_single_scrolled
 
-# 6. Sheets (opened via debug intents: uiautomator can't dump an always-animating UI).
-open_page 0; sleep 2
-adb shell am start -n "$PKG/.MainActivity" --es sheet permission > /dev/null; shot 08_permission_sheet
-adb shell input keyevent BACK; sleep 1
-open_page 2; sleep 2
-adb shell am start -n "$PKG/.MainActivity" --es sheet count > /dev/null; shot 09_count_sheet
-adb shell input keyevent BACK; sleep 1
-adb shell am start -n "$PKG/.MainActivity" --es sheet duration > /dev/null; shot 09b_duration_sheet
-adb shell input keyevent BACK; sleep 1
-
-# 7. Board editor (full screen).
-adb shell am start -n "$PKG/.MainActivity" --es editor Multi > /dev/null; shot 10_editor
-# Dismiss the one-time "Viewing full screen" system notice, then capture again.
-adb shell input tap 860 655; shot 10b_editor 3
-adb shell input keyevent BACK; sleep 1
-
 # 8. Dark theme.
 adb shell cmd uimode night yes
 open_page 2; shot 11_chain_dark 4
@@ -143,6 +127,24 @@ adb shell input tap 262 507
 shot 16_running 6
 adb shell input tap 407 507
 shot 17_stopped 2
+
+# Heavier glass last: on the software-rendered CI emulator these occasionally crash it.
+adb shell am start -n "$PKG/.MainActivity" --ei page 0 > /dev/null; sleep 2
+# 6. Sheets (opened via debug intents: uiautomator can't dump an always-animating UI).
+open_page 0; sleep 2
+adb shell am start -n "$PKG/.MainActivity" --es sheet permission > /dev/null; shot 08_permission_sheet
+adb shell input keyevent BACK; sleep 1
+open_page 2; sleep 2
+adb shell am start -n "$PKG/.MainActivity" --es sheet count > /dev/null; shot 09_count_sheet
+adb shell input keyevent BACK; sleep 1
+adb shell am start -n "$PKG/.MainActivity" --es sheet duration > /dev/null; shot 09b_duration_sheet
+adb shell input keyevent BACK; sleep 1
+
+# 7. Board editor (full screen).
+adb shell am start -n "$PKG/.MainActivity" --es editor Multi > /dev/null; shot 10_editor
+# Dismiss the one-time "Viewing full screen" system notice, then capture again.
+adb shell input tap 860 655; shot 10b_editor 3
+adb shell input keyevent BACK; sleep 1
 
 echo "---- ANRs / crashes (logcat) ----"
 timeout 30 adb logcat -d | grep -E "ANR in|FATAL EXCEPTION|Choreographer.*Skipped [0-9]{3,}" | head -40 || true
