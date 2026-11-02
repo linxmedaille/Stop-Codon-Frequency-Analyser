@@ -200,7 +200,8 @@ private class GlassNode(
     fun update(backdrop: Backdrop?, shape: Shape, style: GlassStyle) {
         this.backdrop = backdrop
         this.shape = shape
-        if (style != this.style) effects = null
+        // Keep the effect cache (and its compiled shader): it rebuilds itself only when
+        // the parameters that shape the effect change, not when the tint animates.
         this.style = style
         invalidateDraw()
     }
@@ -294,7 +295,7 @@ internal class GlassEffects {
     ): androidx.compose.ui.graphics.RenderEffect? {
         if (!glassSupported) return null
         val radius = cornerRadiusOf(outline, size)
-        val k = listOf(size, radius, style)
+        val k = listOf(size, radius, style.blur, style.refraction, style.bezel, style.saturation, style.zoom)
         if (k == key) return effect
         key = k
         effect = with(density) {

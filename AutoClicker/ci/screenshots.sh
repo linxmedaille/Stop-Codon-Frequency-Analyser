@@ -102,6 +102,8 @@ sleep 1.5; adb exec-out screencap -p > "$OUT/05b_swipe_mid.png"; echo "captured 
 adb shell input motionevent UP 340 1400
 sleep 3; adb exec-out screencap -p > "$OUT/05c_after_swipe.png"; echo "captured 05c_after_swipe"
 
+echo "---- crash buffer after swipe ----"; timeout 20 adb logcat -d -b crash | head -60 || true
+
 # 5. Scrolled content.
 open_page 2; sleep 2
 adb shell input swipe 540 1700 540 600 500; shot 06_chain_scrolled
@@ -146,6 +148,7 @@ adb shell am start -n "$PKG/.MainActivity" --es editor Multi > /dev/null; shot 1
 adb shell input tap 860 655; shot 10b_editor 3
 adb shell input keyevent BACK; sleep 1
 
+echo "---- crash buffer ----"; timeout 20 adb logcat -d -b crash | head -80 || true
 echo "---- ANRs / crashes (logcat) ----"
 timeout 30 adb logcat -d | grep -E "ANR in|FATAL EXCEPTION|Choreographer.*Skipped [0-9]{3,}" | head -40 || true
 timeout 30 adb logcat -d | grep -A 25 "FATAL EXCEPTION" | head -80 || true
