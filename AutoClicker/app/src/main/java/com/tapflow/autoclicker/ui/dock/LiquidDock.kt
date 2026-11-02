@@ -95,21 +95,23 @@ fun LiquidDock(
     )
 
     val dockHeight = 74.dp
-    // The lens is a droplet of clearer glass inside the dock: it refracts what's behind
-    // the dock along its rim. Lifted (while dragging/swiping) it turns brighter and grows.
+    // The lens: a droplet of brighter glass inside the dock. The dock body already bends
+    // the page behind it, so the droplet itself is drawn (tint, specular rim, sheen and a
+    // soft shadow) rather than sampling the scene again; it stays cheap while it stretches
+    // and lifts every frame of a swipe.
+    val lensTint = if (c.isDark) {
+        Color.White.copy(alpha = 0.12f + 0.10f * lift)
+    } else {
+        lerp(Color.Black.copy(alpha = 0.075f), Color.White.copy(alpha = 0.6f), lift)
+    }
     val lensStyle = GlassStyle(
-        tint = if (c.isDark) {
-            Color.White.copy(alpha = 0.12f + 0.10f * lift)
-        } else {
-            lerp(Color.Black.copy(alpha = 0.075f), Color.White.copy(alpha = 0.55f), lift)
-        },
-        blur = 10.dp,
-        refraction = 0.9f,
-        bezel = 14.dp,
-        saturation = 1.5f,
+        tint = lensTint,
+        fallbackTint = lensTint,
+        blur = 0.dp,
+        refraction = 0f,
         rimLight = Color.White.copy(alpha = if (c.isDark) 0.45f + 0.4f * lift else 0.35f + 0.6f * lift),
         rimDark = Color.White.copy(alpha = 0.06f),
-        sheen = 0.12f * lift,
+        sheen = 0.16f * lift,
     )
 
     Box(
@@ -179,7 +181,7 @@ fun LiquidDock(
                         scaleY = s * (1f - 0.10f * stretch)
                     }
                     .liquidGlass(
-                        backdrop = backdrop,
+                        backdrop = null,
                         shape = RoundedCornerShape(percent = 50),
                         style = lensStyle,
                         elevation = (1f + 10f * lift).dp,
