@@ -140,7 +140,7 @@ fun SheetHost(ui: AppUi, backdrop: Backdrop?) {
                     .graphicsLayer { translationY = dragY.value }
                     .clickable(remember { MutableInteractionSource() }, indication = null) {},
                 shape = RoundedCornerShape(38.dp),
-                style = GlassDefaults.strong(c).copy(blur = 34.dp, refraction = 0.8f, bezel = 26.dp),
+                style = GlassDefaults.strong(c).copy(blur = 24.dp, refraction = 0.8f, bezel = 26.dp),
                 backdrop = backdrop,
                 elevation = 30.dp,
             ) {
