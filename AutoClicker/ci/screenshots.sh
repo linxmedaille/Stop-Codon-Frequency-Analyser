@@ -94,13 +94,14 @@ adb shell input swipe 540 1700 540 600 500; shot 06_chain_scrolled
 open_page 0; sleep 2
 adb shell input swipe 540 1700 540 500 500; shot 07_single_scrolled
 
-# 6. Sheets.
+# 6. Sheets (opened via debug intents: uiautomator can't dump an always-animating UI).
 open_page 0; sleep 2
-adb shell input swipe 540 600 540 1900 300; sleep 1
-tap_text "Turn on service"; shot 08_permission_sheet
+adb shell am start -n "$PKG/.MainActivity" --es sheet permission > /dev/null; shot 08_permission_sheet
 adb shell input keyevent BACK; sleep 1
 open_page 2; sleep 2
-tap_text "Runs once"; shot 09_count_sheet
+adb shell am start -n "$PKG/.MainActivity" --es sheet count > /dev/null; shot 09_count_sheet
+adb shell input keyevent BACK; sleep 1
+adb shell am start -n "$PKG/.MainActivity" --es sheet duration > /dev/null; shot 09b_duration_sheet
 adb shell input keyevent BACK; sleep 1
 
 # 7. Board editor (full screen).
@@ -119,13 +120,11 @@ adb shell settings put secure enabled_accessibility_services "$PKG/$PKG.service.
 adb shell settings put secure accessibility_enabled 1
 sleep 3
 open_page 0; sleep 3; shot 14_single_service_on 1
-adb shell input swipe 540 1900 540 400 400; sleep 1
-adb shell input swipe 540 1900 540 400 400; sleep 1
-tap_text "Start clicking"; sleep 2
+adb shell am start -n "$PKG/.MainActivity" --es start Single > /dev/null; sleep 3
 adb shell am start -a android.settings.SETTINGS > /dev/null; shot 15_panel_armed 3
 # The panel is its own overlay window; fall back to its known position (pixel_6, 420 dpi).
-tap_text "Play" || adb shell input tap 259 403
+adb shell input tap 259 403
 shot 16_running 6
-tap_text "Stop" || adb shell input tap 406 403
+adb shell input tap 406 403
 shot 17_stopped 2
 echo "done"

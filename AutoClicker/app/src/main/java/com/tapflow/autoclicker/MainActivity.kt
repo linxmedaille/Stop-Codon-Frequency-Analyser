@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.tapflow.autoclicker.ui.AppUi
 import com.tapflow.autoclicker.ui.RootScreen
+import com.tapflow.autoclicker.ui.SheetRequest
 import com.tapflow.autoclicker.ui.theme.TapflowTheme
 import com.tapflow.autoclicker.ui.theme.isDarkFor
 import com.tapflow.core.Mode
@@ -24,7 +25,7 @@ import com.tapflow.core.Mode
 class MainActivity : ComponentActivity() {
     private lateinit var ui: AppUi
     private var pickingFor: Mode = Mode.Single
-    private var requestedPage by mutableStateOf<Int?>(null)
+    private var requestedPage by mutableStateOf<Pair<Int, Long>?>(null)
 
     private val picker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         ui.onScreenshotPicked(pickingFor, uri)
@@ -56,7 +57,7 @@ class MainActivity : ComponentActivity() {
                 onDispose { }
             }
             TapflowTheme(dark = dark) {
-                RootScreen(ui, initialPage = requestedPage)
+                RootScreen(ui, pageRequest = requestedPage)
             }
         }
     }
@@ -69,10 +70,23 @@ class MainActivity : ComponentActivity() {
     /** Optional deep links: `--ei page 0..3` opens a page, `--es editor Chain` opens a board. */
     private fun handleIntent(intent: Intent?) {
         intent ?: return
-        if (intent.hasExtra(EXTRA_PAGE)) requestedPage = intent.getIntExtra(EXTRA_PAGE, 0)
+        if (intent.hasExtra(EXTRA_PAGE)) requestedPage = intent.getIntExtra(EXTRA_PAGE, 0) to System.nanoTime()
         intent.getStringExtra(EXTRA_EDITOR)?.let { name ->
             runCatching { Mode.valueOf(name) }.getOrNull()?.let { ui.editor = it }
         }
+        // Used by the CI screenshot script; harmless otherwise.
+        when (intent.getStringExtra(EXTRA_SHEET)) {
+            "permission" -> ui.show(SheetRequest.Permission)
+            "duration" -> ui.show(SheetRequest.Duration(title = "Wait how long?", valueMs = 20_000, onSet = {}))
+            "count" -> ui.show(SheetRequest.Count(title = "Repeat how many times?", value = 5, allowForever = true, onSet = {}))
+        }
+        intent.getStringExtra(EXTRA_START)?.let { name ->
+            runCatching { Mode.valueOf(name) }.getOrNull()?.let { mode ->
+                window.decorView.post { ui.start(this, mode) }
+            }
+        }
+        intent.removeExtra(EXTRA_SHEET)
+        intent.removeExtra(EXTRA_START)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -84,5 +98,7 @@ class MainActivity : ComponentActivity() {
         private const val KEY_PICKING = "picking_for"
         const val EXTRA_PAGE = "page"
         const val EXTRA_EDITOR = "editor"
+        const val EXTRA_SHEET = "sheet"
+        const val EXTRA_START = "start"
     }
 }

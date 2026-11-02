@@ -52,6 +52,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -79,3 +81,20 @@ jobs:
         with:
           name: tapflow-screenshots
           path: AutoClicker/screenshots/
+      - name: Publish screenshots to the branch (for the README)
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p docs/screenshots
+          rm -f docs/screenshots/*
+          for f in screenshots/[0-9]*.png; do
+            convert "$f" -resize 540x -quality 84 "docs/screenshots/$(basename "${f%.png}").jpg" || cp "$f" docs/screenshots/
+          done
+          ls -la docs/screenshots
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots
+          git commit -m "Update Tapflow screenshots [skip ci]" || exit 0
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 5
+          done

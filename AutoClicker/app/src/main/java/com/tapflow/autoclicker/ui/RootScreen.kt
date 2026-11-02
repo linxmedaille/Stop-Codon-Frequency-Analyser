@@ -78,7 +78,7 @@ fun Context.findActivity(): Activity? {
 }
 
 @Composable
-fun RootScreen(ui: AppUi, initialPage: Int? = null) {
+fun RootScreen(ui: AppUi, pageRequest: Pair<Int, Long>? = null) {
     val store = ui.store
     val ws by store.workspace.collectAsStateWithLifecycle()
     val connected by ClickerBridge.connected.collectAsStateWithLifecycle()
@@ -88,11 +88,12 @@ fun RootScreen(ui: AppUi, initialPage: Int? = null) {
 
     val bgBackdrop = rememberBackdrop()
     val sceneBackdrop = rememberBackdrop()
-    val pager = rememberPagerState(initialPage = initialPage ?: ws.lastMode.ordinal) { PAGE_COUNT }
+    val pager = rememberPagerState(initialPage = pageRequest?.first ?: ws.lastMode.ordinal) { PAGE_COUNT }
     val chainState = remember { ChainUiState() }
 
-    LaunchedEffect(initialPage) {
-        if (initialPage != null && initialPage != pager.currentPage) pager.scrollToPage(initialPage.coerceIn(0, PAGE_COUNT - 1))
+    LaunchedEffect(pageRequest) {
+        val page = pageRequest?.first ?: return@LaunchedEffect
+        if (page != pager.currentPage) pager.scrollToPage(page.coerceIn(0, PAGE_COUNT - 1))
     }
 
     val position = { pager.currentPage + pager.currentPageOffsetFraction }
