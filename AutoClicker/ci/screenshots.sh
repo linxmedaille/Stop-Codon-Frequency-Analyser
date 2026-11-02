@@ -52,7 +52,7 @@ adb install -r "$APK"
 
 # 1. A "target app" screenshot to put on the boards: the system Settings screen.
 adb shell am start -a android.settings.SETTINGS > /dev/null
-sleep 4
+sleep 10
 adb exec-out screencap -p > "$OUT/_target_app.png"
 adb shell input keyevent HOME
 
@@ -93,10 +93,14 @@ open_page 3; shot 04_settings
 
 # 4. Mid-swipe: the liquid page transition and stretched dock lens.
 open_page 0; sleep 2
-adb shell input swipe 980 1400 100 1400 3000 &
-sleep 1.3; adb exec-out screencap -p > "$OUT/05_swipe_mid.png"; echo "captured 05_swipe_mid"
-sleep 0.5; adb exec-out screencap -p > "$OUT/05b_swipe_mid.png"; echo "captured 05b_swipe_mid"
-wait; sleep 1
+# Hold a finger mid-swipe so the frame is deterministic.
+adb shell input motionevent DOWN 960 1400
+for x in 930 880 820 760 700 640 580; do adb shell input motionevent MOVE $x 1400; done
+sleep 1.5; adb exec-out screencap -p > "$OUT/05_swipe_mid.png"; echo "captured 05_swipe_mid"
+for x in 520 460 400 340; do adb shell input motionevent MOVE $x 1400; done
+sleep 1.5; adb exec-out screencap -p > "$OUT/05b_swipe_mid.png"; echo "captured 05b_swipe_mid"
+adb shell input motionevent UP 340 1400
+sleep 3; adb exec-out screencap -p > "$OUT/05c_after_swipe.png"; echo "captured 05c_after_swipe"
 
 # 5. Scrolled content.
 open_page 2; sleep 2
