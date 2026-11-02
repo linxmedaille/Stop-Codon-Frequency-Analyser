@@ -66,12 +66,14 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Run app on emulator and capture screens
+        timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
           profile: pixel_6
+          ram-size: 4096M
           disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           working-directory: AutoClicker
@@ -82,7 +84,7 @@ jobs:
           name: tapflow-screenshots
           path: AutoClicker/screenshots/
       - name: Publish screenshots to the branch (for the README)
-        if: github.event_name == 'push'
+        if: always() && github.event_name == 'push'
         run: |
           mkdir -p docs/screenshots
           rm -f docs/screenshots/*

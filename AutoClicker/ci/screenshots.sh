@@ -9,9 +9,11 @@ OUT=screenshots
 mkdir -p "$OUT"
 rm -f "$OUT"/*.png
 
+alive() { [ "$(timeout 10 adb get-state 2>/dev/null)" = "device" ]; }
 shot() { # name [delay]
   sleep "${2:-4}"
-  adb exec-out screencap -p > "$OUT/$1.png"
+  if ! alive; then echo "emulator is gone; stopping early"; exit 0; fi
+  timeout 30 adb exec-out screencap -p > "$OUT/$1.png"
   echo "captured $1"
 }
 open_page() { adb shell am start -n "$PKG/.MainActivity" --ei page "$1" > /dev/null; }
@@ -136,6 +138,6 @@ adb shell input tap 407 507
 shot 17_stopped 2
 
 echo "---- ANRs / crashes (logcat) ----"
-adb logcat -d | grep -E "ANR in|FATAL EXCEPTION|AndroidRuntime|Choreographer.*Skipped" | head -40 || true
-adb logcat -d | grep -A 25 "FATAL EXCEPTION" | head -80 || true
+timeout 30 adb logcat -d | grep -E "ANR in|FATAL EXCEPTION|Choreographer.*Skipped [0-9]{3,}" | head -40 || true
+timeout 30 adb logcat -d | grep -A 25 "FATAL EXCEPTION" | head -80 || true
 echo "done"
