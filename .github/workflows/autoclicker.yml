@@ -75,7 +75,7 @@ jobs:
           profile: pixel_6
           ram-size: 4096M
           disable-animations: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu guest -noaudio -no-boot-anim -camera-back none
           working-directory: AutoClicker
           script: bash ci/screenshots.sh
       - uses: actions/upload-artifact@v4
