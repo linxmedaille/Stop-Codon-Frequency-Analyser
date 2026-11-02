@@ -87,7 +87,7 @@ jobs:
         if: always() && github.event_name == 'push'
         run: |
           mkdir -p docs/screenshots
-          rm -f docs/screenshots/*
+          # Captures that failed this run keep their previous version.
           pip install --quiet pillow
           python3 - <<'PY'
           import glob, os

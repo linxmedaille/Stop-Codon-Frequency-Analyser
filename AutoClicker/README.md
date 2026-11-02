@@ -10,17 +10,14 @@ want to automate:
 | **Chain** | A Scratch-style block editor: snap together *tap*, *hold*, *swipe*, *wait*, *wait random* and C-shaped *repeat* blocks (nestable, or forever). The default chain is the classic example: tap P1 → wait 20 s → tap P2 → repeat 5× { tap P1, wait 1 s }. |
 
 <p>
-  <img src="docs/screenshots/01_single.jpg" width="24%" alt="Single tap page">
+  <img src="docs/screenshots/14_single_service_on.jpg" width="24%" alt="Single tap page">
   <img src="docs/screenshots/02_multi.jpg" width="24%" alt="Multi tap page">
-  <img src="docs/screenshots/03_chain.jpg" width="24%" alt="Chain block editor">
-  <img src="docs/screenshots/11_chain_dark.jpg" width="24%" alt="Chain editor in dark mode">
+  <img src="docs/screenshots/06_chain_scrolled.jpg" width="24%" alt="Chain block editor">
+  <img src="docs/screenshots/13_multi_dark.jpg" width="24%" alt="Dark mode">
 </p>
 <p>
-  <img src="docs/screenshots/09b_duration_sheet.jpg" width="24%" alt="Glass duration sheet">
-  <img src="docs/screenshots/10b_editor.jpg" width="24%" alt="Full-screen point editor over a screenshot">
   <img src="docs/screenshots/05b_swipe_mid.jpg" width="24%" alt="Mid-swipe: pages become liquid glass slabs">
-</p>
-<p>
+  <img src="docs/screenshots/09b_duration_sheet.jpg" width="24%" alt="Glass duration sheet">
   <img src="docs/screenshots/15_panel_armed.jpg" width="24%" alt="Floating panel over another app">
   <img src="docs/screenshots/16_running.jpg" width="24%" alt="Running: the tap opened Connected devices">
 </p>
