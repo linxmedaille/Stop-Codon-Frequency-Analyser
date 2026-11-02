@@ -89,7 +89,7 @@ val DarkColors = TapflowColors(
     ),
     ink = Color(0xFFF5F5F7),
     inkSecondary = Color(0xFFB1B0B8),
-    inkTertiary = Color(0xFF75747C),
+    inkTertiary = Color(0xFF8F8E98),
     glass = Color(0x24FFFFFF),
     glassStrong = Color(0x3DFFFFFF),
     glassFallback = Color(0xF21C1B22),

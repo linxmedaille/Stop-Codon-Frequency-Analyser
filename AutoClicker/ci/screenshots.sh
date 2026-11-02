@@ -10,7 +10,7 @@ mkdir -p "$OUT"
 rm -f "$OUT"/*.png
 
 shot() { # name [delay]
-  sleep "${2:-2.5}"
+  sleep "${2:-4}"
   adb exec-out screencap -p > "$OUT/$1.png"
   echo "captured $1"
 }

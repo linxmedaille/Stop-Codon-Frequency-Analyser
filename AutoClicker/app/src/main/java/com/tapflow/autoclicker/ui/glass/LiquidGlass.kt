@@ -101,8 +101,15 @@ data class GlassStyle(
 )
 
 object GlassDefaults {
+    /**
+     * Glass over the aurora. The aurora is already a soft gradient, so blurring it again
+     * changes nothing visible but costs a full offscreen blur per surface; these surfaces
+     * refract and tint instead. Surfaces over detailed content (dock, tray, sheets, photo
+     * buttons) set an explicit blur.
+     */
     fun regular(c: TapflowColors) = GlassStyle(
         tint = c.glass,
+        blur = 0.dp,
         rimLight = c.rimLight,
         rimDark = c.rimDark,
         sheen = if (c.isDark) 0.08f else 0.24f,
@@ -111,9 +118,12 @@ object GlassDefaults {
 
     fun strong(c: TapflowColors) = regular(c).copy(tint = c.glassStrong, blur = 28.dp)
 
+    /** Regular glass over busy content: blurred. */
+    fun frosted(c: TapflowColors) = regular(c).copy(blur = 20.dp)
+
     fun clear(c: TapflowColors) = regular(c).copy(
         tint = if (c.isDark) Color.White.copy(alpha = 0.06f) else Color.White.copy(alpha = 0.22f),
-        blur = 6.dp,
+        blur = 0.dp,
         refraction = 0.9f,
         sheen = if (c.isDark) 0.06f else 0.14f,
     )

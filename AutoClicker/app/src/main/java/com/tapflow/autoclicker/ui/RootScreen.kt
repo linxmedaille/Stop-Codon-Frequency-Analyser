@@ -227,7 +227,7 @@ private fun LiquidPage(pager: PagerState, page: Int, content: @Composable () -> 
     val slabStyle = remember(c) {
         GlassDefaults.clear(c).copy(
             tint = if (c.isDark) c.glass else c.glass.copy(alpha = 0.35f),
-            blur = 26.dp,
+            blur = 0.dp,
             refraction = 1f,
             bezel = 30.dp,
             sheen = if (c.isDark) 0.06f else 0.18f,
